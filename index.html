@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Esutdos do capítulo 5</title>
+    <link rel="stylesheet" href="reset.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="conteudo">
+      <div class="topo">
+        <img src="comps/logo-removebg-preview.png" alt="" />
+        <ion-icon name="people" onclick="showoptions()"></ion-icon>
+      </div>
+      <!-- aqui serão as conversas de template -->
+      <ul class="conversas"></ul>
+    </div>
+
+    <div class="mensagem">
+      <input type="text" placeholder="Escreva aqui..." class="inputmensagem" />
+      <ion-icon
+        name="paper-plane-outline"
+        class="botaoenviar"
+        onclick="addmensagem()"
+      ></ion-icon>
+    </div>
+
+    <div class="escondido contatos">
+      <div class="vazia" onclick="hideoptions()"></div>
+      <div class="escolha-um-contato">
+        <div class="pessoas">
+          <div class="titulo">
+            <p>Escolha um contato para <br />enviar mensagem:</p>
+          </div>
+          <div class="todos" onclick="contactselect(this)">
+            <ion-icon name="people"></ion-icon>
+            <p>todos</p>
+          </div>
+          <!-- <div class="Joao" onclick="contactselect(this)">
+            <ion-icon name="person-circle"></ion-icon>
+            <p>João</p>
+          </div>
+          <div class="maria" onclick="contactselect(this)">
+            <ion-icon name="person-circle"></ion-icon>
+            <p>maria</p>
+          </div> -->
+        </div>
+        <div class="titulo">
+          <p>Escolha a visibilidade:</p>
+        </div>
+        <div class="publico" onclick="choosevisibility(this)">
+          <ion-icon name="lock-open"></ion-icon>
+          <p>Público</p>
+        </div>
+        <div class="reservado" onclick="choosevisibility(this)">
+          <ion-icon name="lock-closed"></ion-icon>
+          <p>Reservadamente</p>
+        </div>
+      </div>
+    </div>
+    <!-- ion-icons -->
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+    <!-- JS-script -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
