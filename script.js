@@ -8,7 +8,8 @@ function hideoptions() {
   const select = document.querySelector(".contatos");
   select.classList.add("escondido");
 }
-
+// função seleção de contato
+let nomedestinatario = "";
 function contactselect(element) {
   const before = document.querySelector(".check");
   if (before) {
@@ -20,8 +21,13 @@ function contactselect(element) {
   if (!verify) {
     element.innerHTML += `<ion-icon name="checkmark-sharp"class="check"></ion-icon>`;
   }
+  const paragrafo = element.querySelector("p");
+  if (paragrafo) {
+    nomedestinatario = paragrafo.textContent;
+  }
 }
-
+// função status privado ou público
+let typemenssagem = "";
 function choosevisibility(status) {
   const beforevisibility = document.querySelector(".visibility");
 
@@ -34,8 +40,12 @@ function choosevisibility(status) {
   if (!visibility) {
     status.innerHTML += `<ion-icon name="checkmark-sharp"class="visibility"></ion-icon>`;
   }
+  const type = status.querySelector("p");
+  if (type) {
+    typemenssagem = type.textContent;
+  }
 }
-
+// função para esconder sidebar
 document.querySelector(".contatos").addEventListener("click", (event) => {
   // Verifica se o clique foi diretamente na área escura da .contatos
   if (event.target === event.currentTarget) {
@@ -43,7 +53,7 @@ document.querySelector(".contatos").addEventListener("click", (event) => {
   }
 });
 
-// função qeu mostra as mensagens na tela
+// função que mostra as mensagens na tela
 let infomensagem = [];
 function renderizarmensagens() {
   const localdasmensagens = document.querySelector(".conversas");
@@ -91,37 +101,44 @@ function buscarmensagens() {
 
 buscarmensagens();
 
-// função para add usuarios na sidebar
+// função para add usuarios ativos na sidebar
+let arraydeusuariosativos = [];
 function atualizarSidebarUsuarios() {
-  const usuariosUnicos = new Set();
-  infomensagem.forEach((mensagem) => {
-    if (mensagem.type !== "status") {
-      usuariosUnicos.add(mensagem.from);
-    }
-  });
+  axios
+    .get(
+      "https://mock-api.driven.com.br/api/v6/uol/participants/e349da6b-112a-48f4-8ca5-f82af4953adb"
+    )
+    .then((res) => {
+      arraydeusuariosativos = res.data;
+      atualizarhtml();
+    })
+    .catch(() => {
+      alert("não deu certo bebe!");
+    });
+}
 
-  const listaPessoas = document.querySelector(".pessoas");
-  listaPessoas.innerHTML = `
-    <div class="titulo">
-      <p>Escolha um contato para <br />enviar mensagem:</p>
-    </div>
-    <div class="todos" onclick="contactselect(this)">
-      <ion-icon name="people"></ion-icon>
-      <p>Todos</p>
-    </div>
-  `;
-
-  usuariosUnicos.forEach((usuario) => {
-    listaPessoas.innerHTML += `
-      <div class="Joao" onclick="contactselect(this)">
+function atualizarhtml() {
+  const usuariosunicos = document.querySelector(".pessoas");
+  usuariosunicos.innerHTML = `
+          <div class="titulo">
+            <p>Escolha um contato para <br />enviar mensagem:</p>
+          </div>
+          <div class="todos" onclick="contactselect(this)">
+            <ion-icon name="people"></ion-icon>
+            <p>todos</p>
+          </div>`;
+  for (let i = 0; i < arraydeusuariosativos.length; i++) {
+    usuariosunicos.innerHTML += `
+     <div class="Joao" onclick="contactselect(this)">
         <ion-icon name="person-circle"></ion-icon>
-        <p>${usuario}</p>
+        <p>${arraydeusuariosativos[i].name}</p>
       </div>
-    `;
-  });
+   `;
+  }
 }
 
 // função que permite inserir e validar nome de usuário
+
 function inserirnomedeusuario() {
   nomedeusuario = prompt("Qual o seu nome?");
   if (!nomedeusuario || nomedeusuario.trim() === "") {
@@ -137,14 +154,16 @@ function inserirnomedeusuario() {
       nomeenviarservidor
     )
     .then(() => {
-      alert("Nome enviado com sucesso para o server");
+      alert("SUCESSO!!!");
     })
     .catch(() => {
-      alert("Não deu certo!");
+      alert("ERRO!!");
     });
 }
 
 inserirnomedeusuario();
+setInterval(atualizarSidebarUsuarios, 10000);
+atualizarSidebarUsuarios();
 
 // função para manter online no servidor
 const manteronline = setInterval(() => {
@@ -159,12 +178,18 @@ const manteronline = setInterval(() => {
 
 // Função que permite enviar menssagens
 function addmensagem() {
+  let escolhertipodamensagem = "";
+  if (typemenssagem === "Reservadamente") {
+    escolhertipodamensagem = "private_message";
+  } else {
+    escolhertipodamensagem = "message";
+  }
   const input = document.querySelector(".inputmensagem");
   const novamensagem = {
     from: nomedeusuario,
-    to: "Todos",
+    to: nomedestinatario,
     text: input.value,
-    type: "message",
+    type: escolhertipodamensagem,
   };
 
   axios.post(
