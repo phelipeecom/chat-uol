@@ -101,6 +101,17 @@ function buscarmensagens() {
 
 buscarmensagens();
 
+const autualizarmensagens = setInterval(() => {
+  axios
+    .get(
+      "https://mock-api.driven.com.br/api/v6/uol/messages/e349da6b-112a-48f4-8ca5-f82af4953adb"
+    )
+    .then((resposta) => {
+      infomensagem = resposta.data;
+      renderizarmensagens();
+    });
+}, 3000);
+
 // função para add usuarios ativos na sidebar
 let arraydeusuariosativos = [];
 function atualizarSidebarUsuarios() {
@@ -178,13 +189,15 @@ const manteronline = setInterval(() => {
 
 // Função que permite enviar menssagens
 function addmensagem() {
-  let escolhertipodamensagem = "";
-  if (typemenssagem === "Reservadamente") {
-    escolhertipodamensagem = "private_message";
-  } else {
-    escolhertipodamensagem = "message";
-  }
+  let escolhertipodamensagem =
+    typemenssagem === "Reservadamente" ? "private_message" : "message";
   const input = document.querySelector(".inputmensagem");
+
+  if (!nomedestinatario || nomedestinatario.trim() === "") {
+    alert("Selecione um destinatário antes de enviar a mensagem!");
+    return;
+  }
+
   const novamensagem = {
     from: nomedeusuario,
     to: nomedestinatario,
@@ -192,10 +205,13 @@ function addmensagem() {
     type: escolhertipodamensagem,
   };
 
-  axios.post(
-    "https://mock-api.driven.com.br/api/v6/uol/messages/e349da6b-112a-48f4-8ca5-f82af4953adb",
-    novamensagem
-  );
-  input.value = "";
-  renderizarmensagens();
+  axios
+    .post(
+      "https://mock-api.driven.com.br/api/v6/uol/messages/e349da6b-112a-48f4-8ca5-f82af4953adb",
+      novamensagem
+    )
+    .then(() => {
+      input.value = "";
+      buscarmensagens();
+    });
 }
