@@ -18,7 +18,11 @@
     </div>
 
     <div class="mensagem">
-      <input type="text" placeholder="Escreva aqui..." class="inputmensagem" />
+      <input
+        type="text"
+        placeholder="Escreva aqui (Público)"
+        class="inputmensagem"
+      />
       <ion-icon
         name="paper-plane-outline"
         class="botaoenviar"
@@ -52,6 +56,7 @@
         <div class="publico" onclick="choosevisibility(this)">
           <ion-icon name="lock-open"></ion-icon>
           <p>Público</p>
+          <ion-icon name="checkmark-sharp" class="visibility"></ion-icon>
         </div>
         <div class="reservado" onclick="choosevisibility(this)">
           <ion-icon name="lock-closed"></ion-icon>

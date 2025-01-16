@@ -13,6 +13,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 1;
 }
 
 .topo img {
@@ -27,6 +32,7 @@ ion-icon {
 
 .conversas {
   margin-top: 20px;
+  padding-bottom: 90px;
 }
 
 .conversa_1 {
@@ -95,7 +101,7 @@ ion-icon[name="paper-plane-outline"]:active {
 }
 
 .contatos {
-  z-index: 1;
+  z-index: 2;
   position: fixed;
   top: 0px;
   left: 0px;

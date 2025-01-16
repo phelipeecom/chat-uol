@@ -26,6 +26,7 @@ function contactselect(element) {
     nomedestinatario = paragrafo.textContent;
   }
 }
+
 // função status privado ou público
 let typemenssagem = "";
 function choosevisibility(status) {
@@ -44,6 +45,7 @@ function choosevisibility(status) {
   if (type) {
     typemenssagem = type.textContent;
   }
+  atualizarplaceholder();
 }
 // função para esconder sidebar
 document.querySelector(".contatos").addEventListener("click", (event) => {
@@ -53,6 +55,14 @@ document.querySelector(".contatos").addEventListener("click", (event) => {
   }
 });
 
+// função para filtrar mensagens
+function deveExibirMensagem(mensagem, usuarioAtual) {
+  if (mensagem.type === "private_message") {
+    return mensagem.from === usuarioAtual || mensagem.to === usuarioAtual;
+  }
+  return true;
+}
+
 // função que mostra as mensagens na tela
 let infomensagem = [];
 function renderizarmensagens() {
@@ -60,26 +70,32 @@ function renderizarmensagens() {
   localdasmensagens.innerHTML = "";
 
   for (let i = 0; i < infomensagem.length; i++) {
-    const tipodamensagem = infomensagem[i].type;
+    const mensagem = infomensagem[i];
+    const tipodamensagem = mensagem.type;
 
-    let classetipo = "";
-    switch (tipodamensagem) {
-      case "status":
-        classetipo = "status-message";
-        break;
-      case "private_message":
-        classetipo = "private-message";
-        break;
-      default:
-        classetipo = "";
-    }
+    // Verificar se a mensagem deve ser exibida
+    if (deveExibirMensagem(mensagem, nomedeusuario)) {
+      let classetipo = "";
 
-    localdasmensagens.innerHTML += `
-    <li class="conversa_1 ${classetipo}"}>
-          <p class="data">(${infomensagem[i].time})</p>
-          <p class="nome">${infomensagem[i].from}</p>
-          <p class="texto">${infomensagem[i].text}</p>
+      switch (tipodamensagem) {
+        case "status":
+          classetipo = "status-message";
+          break;
+        case "private_message":
+          classetipo = "private-message";
+          break;
+        default:
+          classetipo = "";
+      }
+
+      // Adicionar mensagem ao HTML
+      localdasmensagens.innerHTML += `
+        <li class="conversa_1 ${classetipo}">
+          <p class="data">(${mensagem.time})</p>
+          <p class="nome">${mensagem.from}</p>
+          <p class="texto">${mensagem.text}</p>
         </li>`;
+    }
   }
 }
 
@@ -122,9 +138,6 @@ function atualizarSidebarUsuarios() {
     .then((res) => {
       arraydeusuariosativos = res.data;
       atualizarhtml();
-    })
-    .catch(() => {
-      alert("não deu certo bebe!");
     });
 }
 
@@ -137,6 +150,7 @@ function atualizarhtml() {
           <div class="todos" onclick="contactselect(this)">
             <ion-icon name="people"></ion-icon>
             <p>todos</p>
+            <ion-icon name="checkmark-sharp" class="check"></ion-icon>
           </div>`;
   for (let i = 0; i < arraydeusuariosativos.length; i++) {
     usuariosunicos.innerHTML += `
@@ -149,7 +163,6 @@ function atualizarhtml() {
 }
 
 // função que permite inserir e validar nome de usuário
-
 function inserirnomedeusuario() {
   nomedeusuario = prompt("Qual o seu nome?");
   if (!nomedeusuario || nomedeusuario.trim() === "") {
@@ -159,17 +172,10 @@ function inserirnomedeusuario() {
   const nomeenviarservidor = {
     name: nomedeusuario,
   };
-  const requisicao = axios
-    .post(
-      "https://mock-api.driven.com.br/api/v6/uol/participants/e349da6b-112a-48f4-8ca5-f82af4953adb",
-      nomeenviarservidor
-    )
-    .then(() => {
-      alert("SUCESSO!!!");
-    })
-    .catch(() => {
-      alert("ERRO!!");
-    });
+  const requisicao = axios.post(
+    "https://mock-api.driven.com.br/api/v6/uol/participants/e349da6b-112a-48f4-8ca5-f82af4953adb",
+    nomeenviarservidor
+  );
 }
 
 inserirnomedeusuario();
@@ -212,6 +218,25 @@ function addmensagem() {
     )
     .then(() => {
       input.value = "";
+      scrollbaixo();
       buscarmensagens();
     });
+}
+
+// função alterar placeholder do input
+function atualizarplaceholder() {
+  const inputMensagem = document.querySelector(".inputmensagem");
+  const placeholderText =
+    typemenssagem === "Reservadamente"
+      ? "Escreva aqui (Reservadamente)"
+      : "Escreva aqui (Público)";
+  inputMensagem.placeholder = placeholderText;
+}
+// função para escrolar tela para baixo
+function scrollbaixo() {
+  const localdasmensagens = document.querySelector(".conversas");
+  const ultimaMensagem = localdasmensagens.lastElementChild;
+  if (ultimaMensagem) {
+    ultimaMensagem.scrollIntoView({ behavior: "smooth" });
+  }
 }
