@@ -170,6 +170,10 @@ ion-icon[name="paper-plane-outline"]:active {
   align-items: center;
 }
 
+.destinatario {
+  font-weight: bold;
+}
+
 ion-icon[name="person-circle"],
 ion-icon[name="lock-open"],
 ion-icon[name="lock-closed"] {

@@ -9,7 +9,7 @@ function hideoptions() {
   select.classList.add("escondido");
 }
 // função seleção de contato
-let nomedestinatario = "";
+let nomedestinatario = "Todos";
 function contactselect(element) {
   const before = document.querySelector(".check");
   if (before) {
@@ -73,19 +73,15 @@ function renderizarmensagens() {
     const mensagem = infomensagem[i];
     const tipodamensagem = mensagem.type;
 
-    // Verificar se a mensagem deve ser exibida
     if (deveExibirMensagem(mensagem, nomedeusuario)) {
       let classetipo = "";
+      let textoMensagem = mensagem.text;
 
-      switch (tipodamensagem) {
-        case "status":
-          classetipo = "status-message";
-          break;
-        case "private_message":
-          classetipo = "private-message";
-          break;
-        default:
-          classetipo = "";
+      if (tipodamensagem === "private_message") {
+        classetipo = "private-message";
+        textoMensagem = `reservadamente para <span class="destinatario">${mensagem.to}</span>: ${mensagem.text}`;
+      } else if (tipodamensagem === "status") {
+        classetipo = "status-message";
       }
 
       // Adicionar mensagem ao HTML
@@ -93,7 +89,7 @@ function renderizarmensagens() {
         <li class="conversa_1 ${classetipo}">
           <p class="data">(${mensagem.time})</p>
           <p class="nome">${mensagem.from}</p>
-          <p class="texto">${mensagem.text}</p>
+          <p class="texto">${textoMensagem}</p>
         </li>`;
     }
   }
@@ -172,10 +168,18 @@ function inserirnomedeusuario() {
   const nomeenviarservidor = {
     name: nomedeusuario,
   };
-  const requisicao = axios.post(
-    "https://mock-api.driven.com.br/api/v6/uol/participants/e349da6b-112a-48f4-8ca5-f82af4953adb",
-    nomeenviarservidor
-  );
+  const requisicao = axios
+    .post(
+      "https://mock-api.driven.com.br/api/v6/uol/participants/e349da6b-112a-48f4-8ca5-f82af4953adb",
+      nomeenviarservidor
+    )
+    .then(() => {
+      alert("parabéns você pode entrar na sala");
+    })
+    .catch(() => {
+      alert("esse nome já existe no servidor, escolha outro");
+      inserirnomedeusuario();
+    });
 }
 
 inserirnomedeusuario();
